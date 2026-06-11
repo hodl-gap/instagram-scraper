@@ -1,0 +1,10 @@
+# Instagram session — secret (sessionid cookie + device identity), never commit
+ig_session.json
+*.session
+
+# Scrape output
+output/
+
+__pycache__/
+*.pyc
+.venv/
