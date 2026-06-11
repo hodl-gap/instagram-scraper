@@ -1,9 +1,19 @@
 [project]
 name = "instagram_scraper"
 version = "0.1.0"
-description = "Standalone Instagram scraper (user posts + hashtag feeds) via instagrapi"
+description = "Standalone Instagram scraper (user posts + hashtag feeds), browser-driven discovery"
 requires-python = ">=3.10"
-dependencies = ["instagrapi"]
+dependencies = ["playwright", "instagrapi"]
+
+[project.optional-dependencies]
+# Heavy, non-VLM video analysis for `--analyze` (shots/transcript/people/OCR).
+# Install with: pip install -e ".[analysis]"
+analysis = [
+    "scenedetect[opencv]",     # shot detection + brightness
+    "faster-whisper",          # speech transcript (CPU-friendly, no torch)
+    "ultralytics",             # YOLO person detection/tracking (pulls torch)
+    "rapidocr-onnxruntime",    # classical OCR (non-VLM) for on-screen text
+]
 
 [build-system]
 requires = ["setuptools>=61"]

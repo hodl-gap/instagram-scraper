@@ -1,9 +1,12 @@
-"""Thin instagrapi wrapper: build an authenticated Client from a saved session.
+"""Thin instagrapi wrapper: build an authenticated Client from the saved session.
 
-There is **no username/password path here by design**. Auth is a browser-born
-session file only (see scripts/ig_session_bootstrap.py), and we never call
-`login()` — so the `load_settings()` + `login()` double-fire that re-triggers
-Instagram's challenge wall cannot happen.
+instagrapi is NOT used for discovery/comments/author (those endpoints are blocked
+from a flagged IP — see README "Investigation"); it serves only per-post
+**hydration** (`media_info` by shortcode), a targeted fetch Instagram still honors.
+
+The session file (`ig_session.json`) is derived from the SAME login as the
+browser — `scrape.py login` writes both from one sign-in (see `auth.py`). We never
+call `login()` here, so the challenge-wall double-fire cannot happen.
 """
 
 from __future__ import annotations
@@ -15,18 +18,17 @@ from typing import Optional
 
 from instagrapi import Client
 
-logger = logging.getLogger("instagram_scraper")
+from instagram_scraper import auth
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
-_DEFAULT_SESSION = _PROJECT_ROOT / "ig_session.json"
+logger = logging.getLogger("instagram_scraper")
 
 
 def session_path(explicit: Optional[str] = None) -> Path:
-    """Resolve the session file: explicit arg > $IG_SESSION_PATH > ./ig_session.json."""
+    """Resolve the session file: explicit arg > $IG_SESSION_PATH > shared auth.SESSION_FILE."""
     if explicit:
         return Path(explicit)
     env = os.environ.get("IG_SESSION_PATH")
-    return Path(env) if env else _DEFAULT_SESSION
+    return Path(env) if env else auth.SESSION_FILE
 
 
 def get_client(explicit_path: Optional[str] = None, delay_range=(1, 3)) -> Client:
@@ -34,8 +36,8 @@ def get_client(explicit_path: Optional[str] = None, delay_range=(1, 3)) -> Clien
     path = session_path(explicit_path)
     if not path.exists():
         raise FileNotFoundError(
-            f"No Instagram session at {path}. Bootstrap one with "
-            "scripts/ig_session_bootstrap.py (see README -> Setup)."
+            f"No Instagram session at {path}. Run `scrape.py login` once (it writes "
+            "both the browser and instagrapi sessions from one sign-in)."
         )
     cl = Client()
     cl.delay_range = list(delay_range)

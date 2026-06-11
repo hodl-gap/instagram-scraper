@@ -1,1 +1,6 @@
+# Browser-driven discovery (hashtag/user listing). After install, run:
+#   playwright install chromium
+playwright
+
+# Optional per-post hydration (--hydrate): targeted media_info fetch.
 instagrapi

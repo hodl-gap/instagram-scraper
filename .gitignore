@@ -2,8 +2,17 @@
 ig_session.json
 *.session
 
+# Browser-discovery Chrome profile if placed inside the repo (holds live cookies)
+.chrome-profile/
+chrome-profile/
+
 # Scrape output
 output/
+
+# --analyze: downloaded mp4s + auto-downloaded model weights
+.reel_work/
+*.pt
+*.onnx
 
 __pycache__/
 *.pyc

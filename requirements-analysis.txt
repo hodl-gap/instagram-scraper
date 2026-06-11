@@ -1,0 +1,8 @@
+# Optional heavy deps for non-VLM video analysis (`scrape.py --analyze`).
+# Install on top of requirements.txt:  pip install -r requirements-analysis.txt
+# These are large (ultralytics pulls torch) and analysis is slow on CPU.
+
+scenedetect[opencv]      # shot boundaries + brightness
+faster-whisper           # spoken-word transcript + language (CPU-friendly, no torch)
+ultralytics              # YOLO person detection/tracking
+rapidocr-onnxruntime     # classical OCR (NOT a VLM) for burned-in on-screen text
